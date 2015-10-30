@@ -377,6 +377,18 @@ copyout(pde_t *pgdir, uint va, void *p, uint len)
   return 0;
 }
 
+int
+mprotect(void *addr, int lent)
+{
+
+}
+
+int
+munprotect(void *addr, int lent)
+{
+
+}
+
 //PAGEBREAK!
 // Blank page.
 //PAGEBREAK!

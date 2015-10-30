@@ -428,6 +428,33 @@ kill(int pid)
   return -1;
 }
 
+//Adding mprotect and munprotect here
+int
+mprotect(void *addr, int len)
+   {
+    //Checks if page-aligned
+   if (addr % PGSIZE != 0) {
+    return -1;
+   }
+   //Check if addr is not too large
+   if ( (addr +len) > (*proc + proc->sz) ) {
+    return -1;
+   }
+   if(len <= 0)	{
+	  	return -1;
+   }
+	
+   return 0;
+}
+
+int
+munprotect(void *addr, int len)
+{
+ return 0;
+}
+
+
+
 //PAGEBREAK: 36
 // Print a process listing to console.  For debugging.
 // Runs when user types ^P on console.
