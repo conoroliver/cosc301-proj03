@@ -6,6 +6,7 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
+//#include "vm.c"
 
 struct {
   struct spinlock lock;
@@ -431,26 +432,88 @@ kill(int pid)
 //Adding mprotect and munprotect here
 int
 mprotect(void *addr, int len)
-   {
+{
+	int ret = -1;
+	int *addrint = addr;
     //Checks if page-aligned
-   if (addr % PGSIZE != 0) {
-    return -1;
+   if (*addrint % PGSIZE != 0) 
+   {
+    return ret;
    }
    //Check if addr is not too large
-   if ( (addr +len) > (*proc + proc->sz) ) {
+   /*
+   int procint = *proc;
+   if ( (*addrint +len) > (procint + proc->sz) ) 
+   {
     return -1;
    }
-   if(len <= 0)	{
-	  	return -1;
+   */
+   
+   if(len <= 0)	
+   {
+	  	return ret;
    }
+
+   int pid = proc->pid;
+   //int *addrint = addr;
+   acquire(&ptable.lock);
+   if (pid < 0 || pid >= NPROC) {
+       release(&ptable.lock); 
+	   return ret;
+   }
+
+
+   int i;
+   for(i = *addrint; i < *addrint + (PGSIZE*len) - 1; i+= PGSIZE) 
+   { 
+	printf("
+      if(ptable.proc[i].pid == pid && ptable.proc[i].state != UNUSED)	{ 
+         do_mprotect(&ptable.proc[pid]);
+		 ret = 0;
+		 break;
+	   }
+    }   
+   release(&ptable.lock);
+
 	
-   return 0;
+   return ret;
 }
 
 int
 munprotect(void *addr, int len)
 {
- return 0;
+   int ret = -1;
+   int *addrint = addr;
+ //Checks if page-aligned
+   if (*addrint % PGSIZE != 0) {
+    return ret;
+   }
+   //if (len > (PGSIZE)
+
+   if(len <= 0)	{
+	  	return ret;
+   }
+
+   int pid = proc->pid;
+   
+   acquire(&ptable.lock);
+    if (pid < 0 || pid >= NPROC) {
+       release(&ptable.lock); 
+	   return ret;
+   }
+
+   int i;
+   for(i = *addrint; i < *addrint + (PGSIZE*len) -1; i+= PGSIZE) { 
+      if(ptable.proc[i].pid == pid && ptable.proc[i].state != UNUSED)	{ 
+         do_munprotect(&ptable.proc[pid]);
+         ret = 0;
+		 break;
+	   }
+   }      
+   release(&ptable.lock);
+
+	
+   return ret;
 }
 
 

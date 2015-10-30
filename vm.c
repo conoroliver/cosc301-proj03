@@ -377,17 +377,43 @@ copyout(pde_t *pgdir, uint va, void *p, uint len)
   return 0;
 }
 
-int
-mprotect(void *addr, int lent)
+void
+do_mprotect(struct proc *p)
 {
-
+   uint i;
+   for(i = 0; i < p -> sz; i += PGSIZE)	
+   {
+      pte_t *pte;
+      pte_t *pde = p->pgdir;
+      if((pte = walkpgdir(pde, (void*)i, 0)) == 0)	
+      {
+		 cprintf("not mapped\n");
+	  }
+      else if((*pte)&PTE_W){
+             *pte = *pte&(~PTE_W);
+       }
+    }
 }
 
-int
-munprotect(void *addr, int lent)
+void
+do_munprotect(struct proc *p)
 {
-
+   uint i;
+   for(i = 0; i < p -> sz; i += PGSIZE)	
+   {
+      pte_t *pte;
+      pte_t *pde = p->pgdir;
+      if((pte = walkpgdir(pde, (void*)i, 0)) == 0)	
+      {
+		 cprintf("not mapped\n");
+	  }
+      else if(!((*pte)&PTE_W)){
+             *pte = *pte | PTE_W;
+       }
+    }
 }
+
+
 
 //PAGEBREAK!
 // Blank page.
