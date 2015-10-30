@@ -10,14 +10,14 @@
 // User code makes a system call with INT T_SYSCALL.
 // System call number in %eax.
 // Arguments on the stack, from the user call to the C
-// library system call function. The saved user %esp points
+// library system call function. Th	e saved user %esp points
 // to a saved program counter, and then the first argument.
 
 // Fetch the int at addr from the current process.
 int
 fetchint(uint addr, int *ip)
 {
-  if(addr >= proc->sz || addr+4 > proc->sz)
+  if(addr >= proc->sz || addr+4 > proc->sz || addr == 0)
     return -1;
   *ip = *(int*)(addr);
   return 0;
@@ -31,7 +31,7 @@ fetchstr(uint addr, char **pp)
 {
   char *s, *ep;
 
-  if(addr >= proc->sz)
+  if(addr >= proc->sz || addr == 0)
     return -1;
   *pp = (char*)addr;
   ep = (char*)proc->sz;
@@ -58,7 +58,7 @@ argptr(int n, char **pp, int size)
   
   if(argint(n, &i) < 0)
     return -1;
-  if((uint)i >= proc->sz || (uint)i+size > proc->sz)
+  if((uint)i >= proc->sz || (uint)i+size > proc->sz || (uint)i == 0)
     return -1;
   *pp = (char*)i;
   return 0;
