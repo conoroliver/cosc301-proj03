@@ -51,7 +51,6 @@ main(int argc, char *argv[])
   assert(mprotect(start, -2) == -1);
   assert(munprotect(start, -2) == -1);
 
-  //printint(mprotect(start, 1));
   assert(mprotect(start, 1) == 0);
   assert(munprotect(start, 1) == 0);
 
