@@ -378,10 +378,10 @@ copyout(pde_t *pgdir, uint va, void *p, uint len)
 }
 
 void
-do_mprotect(struct proc *p)
+do_mprotect(struct proc *p, void *addr)
 {
    uint i;
-   for(i = 0; i < p -> sz; i += PGSIZE)	
+   for(i = (uint)addr; i < p -> sz; i += PGSIZE)	
    {
       pte_t *pte;
       pte_t *pde = p->pgdir;
@@ -391,15 +391,16 @@ do_mprotect(struct proc *p)
 	  }
       else if((*pte)&PTE_W){
              *pte = *pte&(~PTE_W);
+             lcr3(v2p(proc->pgdir));
        }
     }
 }
 
 void
-do_munprotect(struct proc *p)
+do_munprotect(struct proc *p, void *addr)
 {
    uint i;
-   for(i = 0; i < p -> sz; i += PGSIZE)	
+   for(i = (uint)addr ; i < p -> sz; i += PGSIZE)	
    {
       pte_t *pte;
       pte_t *pde = p->pgdir;
@@ -409,6 +410,7 @@ do_munprotect(struct proc *p)
 	  }
       else if(!((*pte)&PTE_W)){
              *pte = *pte | PTE_W;
+             lcr3(v2p(proc->pgdir));
        }
     }
 }

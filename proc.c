@@ -451,18 +451,32 @@ mprotect(void *addr, int len)
    
    if(len <= 0)	
    {
+		cprintf(len);
+		cprintf("-1 on 1\n");
 	  	return ret;
    }
 
-   int pid = proc->pid;
-   //int *addrint = addr;
-   acquire(&ptable.lock);
-   if (pid < 0 || pid >= NPROC) {
-       release(&ptable.lock); 
-	   return ret;
+   if(*addrint + (len * PGSIZE) > proc->sz)
+   {
+	  cprintf("-1 on 2\n");
+	  return ret;
    }
 
+   if(*addrint  > proc->sz || addrint <= 0)
+   {
+      cprintf("-1 on 3\n");
+	  return ret;
+   }
 
+   //int pid = proc->pid;
+   //int *addrint = addr;
+   //acquire(&ptable.lock);
+   //if (pid < 0 || pid >= NPROC) {
+    //   release(&ptable.lock); 
+	//   return ret;
+  // }
+
+   /*
    int i;
    for(i = *addrint; i < *addrint + (PGSIZE*len) - 1; i+= PGSIZE) 
    { 
@@ -474,43 +488,70 @@ mprotect(void *addr, int len)
 	   }
     }   
    release(&ptable.lock);
+   */
+   do_mprotect(proc, addr);
 
 	
    return ret;
 }
 
+
 int
 munprotect(void *addr, int len)
 {
    int ret = -1;
-   int *addrint = addr;
- //Checks if page-aligned
-   if (*addrint % PGSIZE != 0) {
+	int *addrint = addr;
+    //Checks if page-aligned
+   if (*addrint % PGSIZE != 0) 
+   {
     return ret;
    }
-   //if (len > (PGSIZE)
-
-   if(len <= 0)	{
+   //Check if addr is not too large
+   /*
+   int procint = *proc;
+   if ( (*addrint +len) > (procint + proc->sz) ) 
+   {
+    return -1;
+   }
+   */
+   
+   if(len <= 0)	
+   {
 	  	return ret;
    }
 
-   int pid = proc->pid;
-   
-   acquire(&ptable.lock);
-    if (pid < 0 || pid >= NPROC) {
-       release(&ptable.lock); 
-	   return ret;
+   if(*addrint + (len * PGSIZE) > proc->sz)
+   {
+	  return ret;
    }
 
+   if(*addrint  > proc->sz || addrint <= 0)
+   {
+	  return ret;
+   }
+
+   //int pid = proc->pid;
+   //int *addrint = addr;
+   //acquire(&ptable.lock);
+   //if (pid < 0 || pid >= NPROC) {
+    //   release(&ptable.lock); 
+	//   return ret;
+  // }
+
+   /*
    int i;
-   for(i = *addrint; i < *addrint + (PGSIZE*len) -1; i+= PGSIZE) { 
+   for(i = *addrint; i < *addrint + (PGSIZE*len) - 1; i+= PGSIZE) 
+   { 
+	printf("
       if(ptable.proc[i].pid == pid && ptable.proc[i].state != UNUSED)	{ 
-         do_munprotect(&ptable.proc[pid]);
-         ret = 0;
+         do_mprotect(&ptable.proc[pid]);
+		 ret = 0;
 		 break;
 	   }
-   }      
+    }   
    release(&ptable.lock);
+   */
+   do_munprotect(proc, addr);
 
 	
    return ret;
