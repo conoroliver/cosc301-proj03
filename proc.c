@@ -460,13 +460,13 @@ mprotect(void *addr, int len)
 
    if(addrint + (len * PGSIZE) > proc->sz)
    {
-	  cprintf("-1 on 2\n");
+	  //cprintf("-1 on 2\n");
 	  return ret;
    }
 
    if(addrint  > proc->sz || addrint <= 0)
    {
-      cprintf("-1 on 3\n");
+      //cprintf("-1 on 3\n");
 	  return ret;
    }
 
@@ -507,23 +507,23 @@ munprotect(void *addr, int len)
    }
    */
 
-   cprintf("%s%d\n", "lengthoutside = ", len);
+   //cprintf("%s%d\n", "lengthoutside = ", len);
    if(len <= 0)	
    {
-		cprintf("%s%d\n", "lengthinside = ", len);
-		cprintf("-1 on 1\n");
+		//cprintf("%s%d\n", "lengthinside = ", len);
+		//cprintf("-1 on 1\n");
 	  	return ret;
    }
 
    if(addrint + (len * PGSIZE) > proc->sz)
    {
-	  cprintf("-1 on 2\n");
+	  //cprintf("-1 on 2\n");
 	  return ret;
    }
 
    if(addrint  > proc->sz || addrint <= 0)
    {
-      cprintf("-1 on 3\n");
+      //cprintf("-1 on 3\n");
 	  return ret;
    }
 
